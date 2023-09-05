@@ -1,0 +1,98 @@
+[
+  {
+    "model": "courses.payment",
+    "pk": 1,
+    "fields": {
+      "user": 1,
+      "date": "2023-09-05",
+      "course": 2,
+      "lesson": null,
+      "amount": 4900,
+      "payment_type": "Cash"
+    }
+  },
+  {
+    "model": "courses.payment",
+    "pk": 2,
+    "fields": {
+      "user": 1,
+      "date": "2023-09-05",
+      "course": 3,
+      "lesson": null,
+      "amount": 10000,
+      "payment_type": "Cash"
+    }
+  },
+  {
+    "model": "courses.payment",
+    "pk": 3,
+    "fields": {
+      "user": 1,
+      "date": "2023-09-05",
+      "course": 5,
+      "lesson": null,
+      "amount": 19990,
+      "payment_type": "Cash"
+    }
+  },
+  {
+    "model": "courses.payment",
+    "pk": 4,
+    "fields": {
+      "user": 2,
+      "date": "2023-09-05",
+      "course": 5,
+      "lesson": null,
+      "amount": 19990,
+      "payment_type": "Cash"
+    }
+  },
+  {
+    "model": "courses.payment",
+    "pk": 5,
+    "fields": {
+      "user": 2,
+      "date": "2023-09-05",
+      "course": null,
+      "lesson": 4,
+      "amount": 300,
+      "payment_type": "Online"
+    }
+  },
+  {
+    "model": "courses.payment",
+    "pk": 6,
+    "fields": {
+      "user": 2,
+      "date": "2023-09-05",
+      "course": null,
+      "lesson": 5,
+      "amount": 300,
+      "payment_type": "Online"
+    }
+  },
+  {
+    "model": "courses.payment",
+    "pk": 7,
+    "fields": {
+      "user": 2,
+      "date": "2023-09-05",
+      "course": null,
+      "lesson": 6,
+      "amount": 300,
+      "payment_type": "Online"
+    }
+  },
+  {
+    "model": "courses.payment",
+    "pk": 8,
+    "fields": {
+      "user": 3,
+      "date": "2023-09-05",
+      "course": 5,
+      "lesson": null,
+      "amount": 15000,
+      "payment_type": "Online"
+    }
+  }
+]
