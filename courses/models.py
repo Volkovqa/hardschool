@@ -44,7 +44,7 @@ class Payment(models.Model):
         (ONLINE, "Перевод")
     )
 
-    user = models.ForeignKey(User, on_delete=models.SET("deleted"), verbose_name='Плательщик')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Плательщик')
     date = models.DateField(verbose_name='Дата оплаты', auto_now_add=True)
     course = models.ForeignKey('Course', on_delete=models.SET_NULL, verbose_name='Оплаченный курс', **NULLABLE)
     lesson = models.ForeignKey('Lesson', on_delete=models.SET_NULL, verbose_name='Оплаченный урок', **NULLABLE)
