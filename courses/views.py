@@ -1,10 +1,13 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import DestroyAPIView, UpdateAPIView, CreateAPIView, RetrieveAPIView, ListAPIView
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import OrderingFilter
 
 from courses.models import Course, Lesson, Payment
 from courses.serializers import CourseSerializer, LessonSerializer, PaymentSerializer
+
+from courses.services.permissions import IsOwner, IsStaff
 
 
 class CourseViewSet(ModelViewSet):
@@ -13,6 +16,23 @@ class CourseViewSet(ModelViewSet):
     """
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
+
+    def get_permissions(self):
+        """Права доступа"""
+        if self.action == 'retrive':
+            permission_classes = [IsOwner | IsStaff]
+        elif self.action == 'create':
+            permission_classes = [IsStaff]
+        elif self.action == 'destroy':
+            permission_classes = [IsOwner | IsStaff]
+        elif self.action == 'update':
+            permission_classes = [IsOwner | IsStaff]
+        else:
+            permission_classes = [IsAuthenticated]
+        return [permission() for permission in permission_classes]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class LessonListView(ListAPIView):
@@ -35,6 +55,7 @@ class LessonCreateView(CreateAPIView):
 class LessonUpdateView(UpdateAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
+    permission_classes = [IsAdminUser]
 
 
 class LessonDeleteView(DestroyAPIView):
