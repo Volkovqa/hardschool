@@ -21,7 +21,6 @@ class UserListSerializer(ModelSerializer):
         return user
 
 
-
 class UserDetailSerializer(ModelSerializer):
     """
     Детальный вывод одного пользователя. Кроме основных, есть вложенное поле истории платежей
