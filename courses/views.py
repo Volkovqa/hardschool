@@ -46,6 +46,7 @@ class LessonListView(ListAPIView):
 class LessonDetailView(RetrieveAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
+    permission_classes = [IsOwner | IsStaff]
 
 
 class LessonCreateView(CreateAPIView):
@@ -55,12 +56,13 @@ class LessonCreateView(CreateAPIView):
 class LessonUpdateView(UpdateAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminUser, IsOwner | IsStaff]
 
 
 class LessonDeleteView(DestroyAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
+    permission_classes = [IsOwner]
 
 
 class PaymentListView(ListAPIView):
