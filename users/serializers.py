@@ -11,7 +11,7 @@ class UserListSerializer(ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["id", "email", "first_name", "last_name", "phone_number", "location", "is_active"]
+        fields = ["id", "email", "first_name", "last_name", "phone_number", "location", "is_active", "password"]
 
 
 class UserDetailSerializer(ModelSerializer):
@@ -23,4 +23,21 @@ class UserDetailSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "email", "first_name", "last_name", "phone_number", "location", "is_active", "payments"]
+
+
+class UserCreateSerializer(ModelSerializer):
+    """
+    Сериализатор создания пользователя
+    """
+
+    class Meta:
+        model = User
+        fields = ["id", "email", "first_name", "last_name", "phone_number", "location", "is_active", "password"]
+
+    def create(self, validated_data):
+        password = validated_data.pop('password')
+        user = super().create(validated_data)
+        user.set_password(password)
+        user.save()
+        return user
 
