@@ -9,6 +9,8 @@ from courses.serializers import CourseSerializer, LessonSerializer, PaymentSeria
 
 from courses.services.permissions import IsOwner, IsStaff
 
+from paginators import CoursePaginator, LessonPaginator
+
 
 class CourseViewSet(ModelViewSet):
     """
@@ -16,6 +18,7 @@ class CourseViewSet(ModelViewSet):
     """
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
+    pagination_class = CoursePaginator
 
     def get_permissions(self):
         """Права доступа"""
@@ -41,6 +44,7 @@ class LessonListView(ListAPIView):
     """
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
+    pagination_class = LessonPaginator
 
 
 class LessonDetailView(RetrieveAPIView):
