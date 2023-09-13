@@ -6,16 +6,17 @@ from courses.validators import YouTubeLinkValidator
 
 
 class LessonSerializer(serializers.ModelSerializer):
-    description = serializers.CharField(validators=[YouTubeLinkValidator()])
-    video_url = serializers.URLField(validators=[YouTubeLinkValidator()])
+    description = serializers.CharField()
+    video_url = serializers.URLField()
 
     class Meta:
         model = Lesson
         fields = ["id", "course_id", "title", "description", "video_url"]
+        validators = [YouTubeLinkValidator(field='video_url')]
 
 
 class CourseSerializer(serializers.ModelSerializer):
-    description = serializers.CharField(validators=[YouTubeLinkValidator()])
+    description = serializers.CharField()
 
     lessons = LessonSerializer(source='lesson_set', many=True)
     lessons_count = serializers.SerializerMethodField(read_only=True)

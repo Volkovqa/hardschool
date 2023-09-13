@@ -3,9 +3,10 @@ from rest_framework.serializers import ValidationError
 
 class YouTubeLinkValidator:
 
-    def __call__(self, value):
-        value = value.lower()
+    def __init__(self, field):
+        self.field = field
 
-        if 'https' in value or '.com' in value:
-            if 'youtube.com' not in value and 'youtu.be' not in value:
-                raise ValidationError("Разрешены только ссылки на YouTube")
+    def __call__(self, value):
+        video_url = value.get('video_url')
+        if ('www.youtube' not in video_url) and ('https://youtu.be' not in video_url):
+            raise ValidationError('Разрешены ссылки только на youtube')
