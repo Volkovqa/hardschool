@@ -9,7 +9,7 @@ from courses.serializers import CourseSerializer, LessonSerializer, PaymentSeria
 
 from courses.services.permissions import IsOwner, IsStaff
 
-from paginators import CoursePaginator, LessonPaginator
+from courses.paginators import CoursePaginator, LessonsPaginator
 
 
 class CourseViewSet(ModelViewSet):
@@ -44,7 +44,7 @@ class LessonListView(ListAPIView):
     """
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
-    pagination_class = LessonPaginator
+    pagination_class = LessonsPaginator
 
 
 class LessonDetailView(RetrieveAPIView):
