@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
-from courses.models import Course, Payment
-from courses.models import Lesson
+from courses.models import (Course, Payment, Lesson, Subscription)
 from courses.validators import YouTubeLinkValidator
 
 
@@ -20,16 +19,32 @@ class CourseSerializer(serializers.ModelSerializer):
 
     lessons = LessonSerializer(source='lesson_set', many=True)
     lessons_count = serializers.SerializerMethodField(read_only=True)
+    is_subscribed = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Course
+        fields = ['id', 'title', 'description', 'lessons_count', 'lessons', 'is_subscribed']
 
     def get_lessons_count(self, obj):
         return obj.lesson_set.all().count()
 
-    class Meta:
-        model = Course
-        fields = ['id', 'title', 'description', 'lessons_count', 'lessons']
+    def get_is_subscribed(self, instance):
+        """Проверка подписки"""
+        request = self.context.get('request')
+        subscription = Subscription.objects.filter(course=instance.pk, user=request.user).exists()
+        if subscription:
+            return True
+        return False
 
 
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = ["user", "date", "course", "lesson", "amount", "payment_type"]
+
+
+class SubscriptionSerializer(serializers.ModelSerializer):
+    """Сериализатор для модели Subscription"""
+    class Meta:
+        model = Subscription
+        fields = ["user", "course"]

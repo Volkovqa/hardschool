@@ -5,7 +5,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import OrderingFilter
 
 from courses.models import Course, Lesson, Payment
-from courses.serializers import CourseSerializer, LessonSerializer, PaymentSerializer
+from courses.serializers import CourseSerializer, LessonSerializer, PaymentSerializer, SubscriptionSerializer
 
 from courses.services.permissions import IsOwner, IsStaff
 
@@ -22,7 +22,7 @@ class CourseViewSet(ModelViewSet):
         if self.action == 'retrive':
             permission_classes = [IsOwner | IsStaff]
         elif self.action == 'create':
-            permission_classes = [IsStaff]
+            permission_classes = [IsAuthenticated | IsStaff]
         elif self.action == 'destroy':
             permission_classes = [IsOwner | IsStaff]
         elif self.action == 'update':
@@ -32,7 +32,7 @@ class CourseViewSet(ModelViewSet):
         return [permission() for permission in permission_classes]
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(owner=self.request.user)
 
 
 class LessonListView(ListAPIView):
@@ -51,6 +51,12 @@ class LessonDetailView(RetrieveAPIView):
 
 class LessonCreateView(CreateAPIView):
     serializer_class = LessonSerializer
+    permission_classes = [IsAuthenticated | IsStaff]
+
+    def perform_create(self, serializer):
+        new_lesson = serializer.save()
+        new_lesson.owner = self.request.user
+        new_lesson.save()
 
 
 class LessonUpdateView(UpdateAPIView):
@@ -74,3 +80,25 @@ class PaymentListView(ListAPIView):
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     ordering_fields = ('date',)
     filterset_fields = ('course', 'lesson', 'payment_type')
+
+
+class SubscriptionListAPIView(ListAPIView):
+    serializer_class = SubscriptionSerializer
+    queryset = Lesson.objects.all()
+    permission_classes = [IsOwner, IsStaff]
+
+
+class SubscriptionCreateAPIView(CreateAPIView):
+    """Создание подписки"""
+    serializer_class = SubscriptionSerializer
+
+    def perform_create(self, serializer):
+        new_subscribe = serializer.save()
+        new_subscribe.user = self.request.user
+        new_subscribe.save()
+
+
+class SubscriptionDeleteAPIView(DestroyAPIView):
+    """Удаление подписки"""
+    queryset = Lesson.objects.all()
+    permission_classes = [IsOwner, IsStaff]
