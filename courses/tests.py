@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from courses.models import Lesson, Course
+from courses.models import Lesson, Course, Subscription, Payment
 from users.models import User
 
 
@@ -115,3 +115,60 @@ class LessonTestCase(APITestCase):
         self.assertFalse(
             Lesson.objects.exists()
         )
+
+
+class SetupTestCase(APITestCase):
+    def setUp(self):
+        self.user = User(email='test@test.ru', is_superuser=True, is_staff=True, is_active=True)
+        self.user.set_password('123QWE456RTY')
+        self.user.save()
+
+        response = self.client.post(
+            '/api/token/',
+            {"email": "test@test.ru", "password": "123QWE456RTY"}
+        ).json()
+
+        self.access_token = response.json().get('access')
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access_token}')
+
+
+class SubscribeTestCase(SetupTestCase):
+    def setUp(self):
+        super().setUp()
+
+        self.course = Course.objects.create(
+            name='Test course',
+            description='Test description',
+            price=100
+        )
+
+    def test_subscription_create(self):
+        payment = Payment.objects.create(amount=100, user=self.user)
+        data = {
+            'course': self.course.id,
+            'user': self.user.id,
+            'payment': payment.id
+        }
+
+        response = self.client.post('/courses/subscriptions/create/', data)
+        self.assertEqual(response.status_code, 201)
+
+        subscription = Subscription.objects.get(id=response.data['id'])
+        self.assertEqual(subscription.course, self.course)
+        self.assertEqual(subscription.user, self.user)
+        self.assertEqual(subscription.payment, payment)
+        self.assertFalse(subscription.status)
+
+    def test_subscription_delete(self):
+        subscription = Subscription.objects.create(
+            course=self.course,
+            user=self.user,
+            payment=Payments.objects.create(user=self.user, payment_amount=100)
+        )
+
+        url = f'/courses/subscriptions/delete/{subscription.id}/'
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 204)
+
+        with self.assertRaises(ObjectDoesNotExist):
+            Subscription.objects.get(id=subscription.id)
