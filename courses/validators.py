@@ -7,6 +7,7 @@ class YouTubeLinkValidator:
         self.field = field
 
     def __call__(self, value):
+        """Можно добавлять только сслыки на youtube"""
         video_url = value.get('video_url')
-        if ('www.youtube' not in video_url) and ('https://youtu.be' not in video_url):
-            raise ValidationError('Разрешены ссылки только на youtube')
+        if video_url is not None and 'www.youtube' not in video_url:
+            raise ValidationError('Допустимы ссылки только на youtube')
