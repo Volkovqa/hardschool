@@ -1,6 +1,7 @@
 asgiref==3.7.2
 asttokens==2.4.0
 backcall==0.2.0
+coverage==7.3.1
 decorator==5.1.1
 Django==4.2.4
 django-filter==23.2

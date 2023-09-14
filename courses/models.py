@@ -1,5 +1,6 @@
 from django.db import models
 from users.models import User
+from config import settings
 
 NULLABLE = {
     'blank': True,
@@ -11,6 +12,7 @@ class Course(models.Model):
     title = models.CharField(max_length=250, verbose_name="Название курса")
     preview = models.ImageField(upload_to='courses/', verbose_name="Обложка", **NULLABLE)
     description = models.TextField(verbose_name="Описание", **NULLABLE)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, **NULLABLE, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.title}"
@@ -21,11 +23,12 @@ class Course(models.Model):
 
 
 class Lesson(models.Model):
-    course_id = models.ForeignKey("Course", on_delete=models.CASCADE, verbose_name="Курс")
+    course_id = models.ForeignKey("Course", on_delete=models.CASCADE, verbose_name="Курс", **NULLABLE)
     title = models.CharField(max_length=250, verbose_name="Название курса")
     preview = models.ImageField(upload_to='courses/', verbose_name="Обложка", **NULLABLE)
     description = models.TextField(verbose_name="Описание", **NULLABLE)
     video_url = models.URLField(max_length=200, verbose_name="Ссылка на видео", **NULLABLE)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, **NULLABLE, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.title}"
@@ -57,3 +60,17 @@ class Payment(models.Model):
     class Meta:
         verbose_name = "Платеж"
         verbose_name_plural = "Платежи"
+
+
+class Subscription(models.Model):
+    """Модель подписки"""
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                             verbose_name="Пользователь", **NULLABLE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name="Курс")
+
+    def __str__(self):
+        return f"{self.user} подписан на {self.course}"
+
+    class Meta:
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
