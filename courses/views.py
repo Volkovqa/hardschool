@@ -83,8 +83,35 @@ class PaymentListView(ListAPIView):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
     filter_backends = (DjangoFilterBackend, OrderingFilter)
+
+    # сортировка
     ordering_fields = ('date',)
+
+    # фильтрация по полям
     filterset_fields = ('course', 'lesson', 'payment_type')
+
+
+class PaymentCreateView(CreateAPIView):
+    """Создание платежа"""
+    serializer_class = PaymentSerializer
+
+    def perform_create(self, serializer):
+        """Сохраняет пользователя и курс"""
+        new_payment = serializer.save()
+        new_payment.user = self.request.user
+        new_payment.course = Course.objects.get(pk=self.kwargs.get('pk'))
+        new_payment.save()
+
+
+class PaymentRetrieveView(RetrieveAPIView):
+    serializer_class = PaymentSerializer
+
+    def get_object(self):
+        object = Payment.objects.get(
+            user=self.request.user,
+            paid_course=Course.objects.get(pk=self.kwargs.get('pk'))
+        )
+        return object
 
 
 class SubscriptionListAPIView(ListAPIView):

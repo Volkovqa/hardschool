@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'rest_framework_simplejwt',
+    'drf_yasg',
 
     'users',
     'courses',
@@ -144,3 +145,5 @@ REST_FRAMEWORK = {
     ]
 
 }
+
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
