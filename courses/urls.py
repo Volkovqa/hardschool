@@ -2,7 +2,7 @@ from django.urls import path
 from rest_framework.routers import DefaultRouter
 from courses.apps import CoursesConfig
 from courses.views import CourseViewSet, LessonListView, LessonDetailView, LessonCreateView, LessonUpdateView, \
-    LessonDeleteView, PaymentListView
+    LessonDeleteView, PaymentListView, PaymentCreateView, PaymentRetrieveView
 from courses.views import SubscriptionListAPIView, SubscriptionCreateAPIView, SubscriptionDeleteAPIView
 
 app_name = CoursesConfig.name
@@ -18,7 +18,9 @@ urlpatterns = [
     path('lessons/<int:pk>/delete/', LessonDeleteView.as_view(), name='lessons_delete'),
 
     # payment
-    path('payment/list/', PaymentListView.as_view(), name='payment_list'),
+    path('payment/list/', PaymentListView.as_view(), name='payment-list'),
+    path('payment/create/<int:pk>/', PaymentCreateView.as_view(), name='payment-create'),
+    path('payment/<int:pk>/', PaymentRetrieveView.as_view(), name='payment-status'),
 
     # subscription
     path('subscriptions/', SubscriptionListAPIView.as_view(), name='subscriptions_list'),

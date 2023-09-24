@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from courses.models import (Course, Payment, Lesson, Subscription)
 from courses.validators import YouTubeLinkValidator
+from courses.services.payment import create_payment
 
 
 class LessonSerializer(serializers.ModelSerializer):
@@ -36,9 +37,20 @@ class CourseSerializer(serializers.ModelSerializer):
 
 
 class PaymentSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Payment
         fields = ["user", "date", "course", "lesson", "amount", "payment_type"]
+
+    def create(self, validated_data):
+        payment = Payment(
+            user=validated_data['user'],
+            amount=validated_data['amount'],
+            payment_type=validated_data['payment_type'],
+            payment_id=create_payment(validated_data['amount']),
+        )
+        payment.save()
+        return payment
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
